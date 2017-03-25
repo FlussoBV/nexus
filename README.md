@@ -43,10 +43,34 @@ logs, and storage.
 
 If you want to run Nexus in SSL, you need to create a Java keystore file with your certificate. See the [Jetty documentation](http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html) for help.
 
-You will need to mount your keystore to the appropriate directory and pass in the keystore password as well.
+Unlike the clearent/nexus image, this will not allow you to host the image with ssl in a normal docker environment.
+It requires you to run your docker daemon in [Swarm mode](https://docs.docker.com/engine/swarm/swarm-mode/) to utlize the [docker secrets](https://docs.docker.com/engine/swarm/secrets).
 
+You have to supply two parameters to provide the required information for where the keystore and its password can be foud.
+
+* *JKS_STORE*: the location of the keystore
+* *JKS_PASSWORD_FILE*: the location of the keystore password file 
+
+For creating the two secrets (keystore and password), you do it like this:
+
+```bash
+docker secret create keystore-nexus3 jetty-nexus3-keystore.jks
+echo "MyAmazingPassword" | docker secret create keystore-nexus3-pass -
 ```
-$ docker run -d -p 8443:8443 --name nexus -v /path/to/your-keystore.jks:/nexus-data/keystore.jks -e JKS_PASSWORD="changeit" clearent/nexus
+
+Docker allows you to give specific services rights to use the secrets and it allows you to target them to specific location.
+The secrets will be mounted as a file in /run/secrets/${target}
+
+And you can then run the docker service as follows:
+
+```bash
+ docker service create --name n3 \
+     --secret source=keystore-nexus3,target=jks_store \
+     --secret source=keystore-nexus3-pass,target=jks_pass \
+     -e JKS_STORE="/run/secrets/jks_store"\
+     -e JKS_PASSWORD_FILE="/run/secrets/jks_pass"\
+     -p 8443:8443 \
+      nexus3-image
 ```
 
 Nexus will now serve its' UI on HTTPS on port 8443 and redirect HTTP requests to HTTPS.

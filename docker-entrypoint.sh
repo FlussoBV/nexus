@@ -1,11 +1,11 @@
 #!/bin/sh
 
-set -x
-
 if [ "$1" = 'bin/nexus' ]; then
 
-  if [ -f "${NEXUS_DATA}/keystore.jks" ]; then
-    ln -s "${NEXUS_DATA}/keystore.jks" "${NEXUS_HOME}/etc/ssl/keystore.jks"
+  if [ -f "${JKS_STORE}" ]; then
+    # IF we have a keystore, we should also have a docker secrets for the password
+    read JKS_PASSWORD < ${JKS_PASSWORD_FILE}
+    ln -s "${JKS_STORE}" "${NEXUS_HOME}/etc/ssl/keystore.jks"
     sed \
       -e "s|OBF.*|${JKS_PASSWORD}</Set>|g" \
       -i "${NEXUS_HOME}/etc/jetty/jetty-https.xml"
