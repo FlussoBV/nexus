@@ -10,6 +10,9 @@ if [ "$1" = 'bin/nexus' ]; then
       -e "s|OBF.*|${JKS_PASSWORD}</Set>|g" \
       -i "${NEXUS_HOME}/etc/jetty/jetty-https.xml"
     sed \
+      -e "s|nexus-context-path=/|nexus-context-path=${CONTEXT_PATH}|" \
+      -i "${NEXUS_HOME}/etc/nexus-default.properties"
+    sed \
       -e "s|nexus-args=.*|nexus-args=\${jetty.etc}/jetty.xml,\${jetty.etc}/jetty-http.xml,\${jetty.etc}/jetty-requestlog.xml,\${jetty.etc}/jetty-https.xml,\${jetty.etc}/jetty-http-redirect-to-https.xml|g" \
       -i "${NEXUS_HOME}/etc/nexus-default.properties"
     grep \

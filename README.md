@@ -96,3 +96,20 @@ for additional information.
     ```
     $ docker run -d -p 8081:8081 --name nexus -v /some/dir/nexus-data:/nexus-data clearent/nexus
     ```
+
+
+### Context Root
+
+You can now set the context root by supplying the environment variable CONTEXT_PATH.
+
+The default is ```/nexus```, if you want this set to ```/nexus3``` you can create the service as follows.
+
+```bash
+ docker service create --name n3 \
+     --secret source=keystore-nexus3,target=jks_store \
+     --secret source=keystore-nexus3-pass,target=jks_pass \
+     -e JKS_STORE="/run/secrets/jks_store"\
+     -e JKS_PASSWORD_FILE="/run/secrets/jks_pass"\
+     -e CONTEXT_PATH="/nexus3" \
+      nexus3-image
+```

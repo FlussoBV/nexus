@@ -12,7 +12,7 @@ ENV NEXUS_VERSION="3.2.1-01" \
     JKS_STORE="changeit" \
     JKS_PASSWORD_FILE="changeit"\
     JKS_PASSWORD="changeit"
-
+ENV CONTEXT_PATH /nexus
 RUN set -x \
     && apk --no-cache add \
         openjdk8-jre-base \
