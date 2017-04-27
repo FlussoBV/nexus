@@ -2,6 +2,10 @@
 
 if [ "$1" = 'bin/nexus' ]; then
 
+  sed \
+    -e "s|nexus-context-path=/|nexus-context-path=${CONTEXT_PATH}|" \
+    -i "${NEXUS_HOME}/etc/nexus-default.properties"
+
   if [ -f "${JKS_STORE}" ]; then
     # IF we have a keystore, we should also have a docker secrets for the password
     read JKS_PASSWORD < ${JKS_PASSWORD_FILE}
@@ -10,10 +14,7 @@ if [ "$1" = 'bin/nexus' ]; then
       -e "s|OBF.*|${JKS_PASSWORD}</Set>|g" \
       -i "${NEXUS_HOME}/etc/jetty/jetty-https.xml"
     sed \
-      -e "s|nexus-context-path=/|nexus-context-path=${CONTEXT_PATH}|" \
-      -i "${NEXUS_HOME}/etc/nexus-default.properties"
-    sed \
-      -e "s|nexus-args=.*|nexus-args=\${jetty.etc}/jetty.xml,\${jetty.etc}/jetty-http.xml,\${jetty.etc}/jetty-requestlog.xml,\${jetty.etc}/jetty-https.xml,\${jetty.etc}/jetty-http-redirect-to-https.xml|g" \
+      -e "s|nexus-args=.*|nexus-args=\${jetty.etc}/jetty.xml,\${jetty.etc}/jetty-http.xml,\${jetty.etc}/jetty-requestlog.xml,\${jetty.etc}/jetty-https.xml|g" \
       -i "${NEXUS_HOME}/etc/nexus-default.properties"
     grep \
       -q "application-port-ssl" "${NEXUS_HOME}/etc/nexus-default.properties" || \
