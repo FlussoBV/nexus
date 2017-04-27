@@ -75,6 +75,14 @@ And you can then run the docker service as follows:
 
 Nexus will now serve its' UI on HTTPS on port 8443 and redirect HTTP requests to HTTPS.
 
+#### HTTP vs HTTPS
+
+Unlike the clearent image this does not do a redirect.
+
+It allows both HTTP and HTTPS separately.
+
+This allows it to be used with a reverse proxy that takes over the SSL termination.
+In that case, the redirect is harmful, redirecting you to a non accessable url.
 
 ### Persistent Data
 
