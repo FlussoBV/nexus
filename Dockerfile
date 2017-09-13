@@ -2,7 +2,7 @@ FROM sonatype/nexus3
 
 MAINTAINER Joost van der Griendt <j.vandergriendt@flusso.nl>
 LABEL authors="Joost van der Griendt <j.vandergriendt@flusso.nl>"
-LABEL version="3.5.1-1"
+LABEL version="3.5.2-1"
 LABEL description="Docker container for Nexus 3 For Docker Swarm"
 
 ENV NEXUS_BLOB_DATA="/blob"
@@ -27,5 +27,9 @@ RUN mkdir -p "${NEXUS_BLOB_DATA}/maven" \
 
 VOLUME "${NEXUS_DATA}"
 VOLUME "${NEXUS_BLOB_DATA}"
+
+WORKDIR ${NEXUS_HOME}
+
+ENV INSTALL4J_ADD_VM_PARAMS="-Xms1200m -Xmx1200m -XX:MaxDirectMemorySize=2g -Djava.util.prefs.userRoot=${NEXUS_DATA}/javaprefs"
 
 CMD ["bin/nexus", "run"]
